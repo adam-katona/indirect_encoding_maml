@@ -1,5 +1,5 @@
 # Overview
-This repository containes the code for the paper: Utilizing the Untapped Potential of Indirect Encoding for Neural Networks with Meta Learning
+This repository contains the code for the paper: Utilizing the Untapped Potential of Indirect Encoding for Neural Networks with Meta Learning
 
 It contains:
 1. Our pytorch implementation of MAML [[1]](#1)
