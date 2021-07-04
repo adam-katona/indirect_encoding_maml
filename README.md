@@ -38,6 +38,8 @@ Results will be saved in the specified RESULT_ROOT_PATH. The run will save vario
 Results can be analysed with the notebook: analyse_results.ipynb
 
 
+# Change log:
+2021.07.04: fix bug effecting maml with more than 1 finetuning steps. This does not effect results in paper, since we only used a single fintuning step.
 
 
 # Acknowladgment:

@@ -101,9 +101,8 @@ def evaluate_meta_batch(net,per_param_per_step_lrs,config,device,is_test,record_
 
     for task_i in range(support_x.shape[0]):
 
-        # when current_params is None, the model will use its own parameters, 
-        # which is what we want for the first iteration
-        current_params = None   
+        # initialize current_params with the net parameters (for the first adaptaion step)
+        current_params = dict(net.named_parameters())   
         
         for adaptaion_i in range(num_adaptation_steps):
 
@@ -130,13 +129,8 @@ def evaluate_meta_batch(net,per_param_per_step_lrs,config,device,is_test,record_
             # the same weight generation for each task.
             # Now we have to be extra careful to call net.after_weight_update(), because
             # it will not be an error now.
-            gradients = torch.autograd.grad(loss, net.parameters(),retain_graph=True)
+            gradients = torch.autograd.grad(loss, current_params.values() ,retain_graph=True)
             
-            # in case of first iteration we used None as current_params to signal that we want to use the model's own parameters,
-            # and not supply them externally
-            # Now we need to set current params to model params, so we can do our first gradient step from it.
-            if current_params is None:  
-                current_params = dict(net.named_parameters())
 
             adapted_params = {}
             for grad,(name,param) in zip(gradients, current_params.items()):
@@ -249,7 +243,7 @@ def run_maml(config):
         meta_optim.step()
         if config["META_LR_SCHEDULE_TYPE"] is not None:
             lr_schedule.step()
-            lr_schedule_log.append(lr_schedule.get_lr()[0])
+            lr_schedule_log.append(lr_schedule.get_last_lr()[0])
         net.after_weight_update()
 
         # LOGGING
